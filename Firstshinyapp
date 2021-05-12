@@ -1,0 +1,30 @@
+#    http://shiny.rstudio.com/
+#
+
+library(shiny)
+library(curl)
+library(ggplot2)
+library(ggthemes)
+data <- read.csv(file = "https://raw.githubusercontent.com/gsscud/Shinytesting/main/phas.csv")
+gtypeselect <- unique(data$gtype)
+# Define UI for application that draws a histogram
+ui <- shiny::fluidPage(
+    shiny::selectInput("gtype","Select ghost type",gtypeselect),
+    plotOutput("plot")
+    )
+
+
+# Define server logic required to draw a histogram
+server <- function(input, output) {
+output$plot <- shiny::renderPlot(ggplot(data = data[data$gtype == input$gtype,], mapping = aes( x = interactions))+
+                          geom_bar()+
+                              theme_solarized() +
+                              ggtitle(input$gtype) +
+                              theme(axis.title = element_text(size =7),title = element_text(size = 9))
+                      ,width = 600, height = 600,res = 300)
+
+}
+
+# Run the application 
+shiny::shinyApp(ui = ui, server = server)
+
